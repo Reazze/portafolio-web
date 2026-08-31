@@ -1,0 +1,12 @@
+# Compilados de Maven
+target/
+
+# Archivos de configuración local de VS Code
+.vscode/
+.settings/
+.classpath
+.project
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
