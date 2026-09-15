@@ -8,6 +8,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -26,7 +27,13 @@ public class UnitServlet extends HttpServlet {
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-
+        
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("usuario_id") == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().print("{\"status\":\"error\", \"message\":\"Acceso no autorizado. Inicie sesión.\"}");
+            return;
+        }
         // Parámetros opcionales enviados desde el cliente (Por defecto: DPW, Semestre 1)
         String programa = request.getParameter("programa");
         if (programa == null || programa.trim().isEmpty()) {

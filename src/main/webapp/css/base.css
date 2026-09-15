@@ -1,0 +1,64 @@
+:root {
+  --bg-color: #040914;
+  --neuron-blue: #00e5ff;
+  --neuron-active: #00ffaa;
+  --neuron-glow: rgba(0, 229, 255, 0.4);
+  --panel-bg: rgba(10, 20, 38, 0.85);
+  --border-neon: #00e5ff;
+  --text-primary: #e0f7fa;
+  --text-muted: #80deea;
+  --font-mono: 'Courier New', Courier, monospace;
+}
+
+* { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  user-select: none;
+}
+/* ==================== CORRECCIÓN DE POSICIONAMIENTO Z-INDEX ==================== */
+
+#access-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(4, 9, 20, 0.85); /* Permite ver el Matrix al fondo sin tapar la tarjeta */
+}
+
+#matrix-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none; /* Evita que el canvas capture clics destinados al formulario */
+}
+
+#access-card {
+  position: relative;
+  z-index: 1001; /* Asegura que la tarjeta siempre flote sobre el canvas Matrix */
+  display: flex;
+  max-width: 900px;
+  width: 90%;
+  background: rgba(8, 14, 28, 0.95);
+  border: 1px solid rgba(0, 255, 170, 0.3);
+  box-shadow: 0 0 30px rgba(0, 255, 170, 0.15);
+  border-radius: 6px;
+  overflow: hidden;
+}

@@ -1,0 +1,132 @@
+/* ==================== CANVASES Y NAVEGACIÓN ==================== */
+#canvas-3d-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+#canvas-3d-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: auto !important;
+}
+
+.viewport {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  z-index: 2;
+  pointer-events: none;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.05) 0%, transparent 70%),
+    radial-gradient(rgba(0, 229, 255, 0.15) 1px, transparent 1px);
+  background-size: 100% 100%, 40px 40px;
+}
+
+.viewport:active {
+  cursor: grabbing;
+}
+
+#world, #neurons-container {
+  pointer-events: none;
+}
+
+#synapse-svg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.synapse-path {
+  stroke: rgba(0, 229, 255, 0.2);
+  stroke-width: 3;
+  fill: none;
+  transition: all 0.5s ease;
+  stroke-dasharray: 8 4;
+}
+
+.synapse-path.active {
+  stroke: var(--neuron-active);
+  stroke-width: 4;
+  stroke-dasharray: none;
+  filter: drop-shadow(0 0 10px var(--neuron-active));
+}
+
+/* ==================== NEURONA BIOLUMINISCENTE ==================== */
+.neuron-group {
+  pointer-events: auto;
+}
+
+.dendrites-svg {
+  width: 100%; height: 100%;
+  overflow: visible;
+}
+
+.dendrite-branch {
+  stroke: rgba(0, 229, 255, 0.35);
+  stroke-width: 2.5;
+  fill: none;
+  stroke-linecap: round;
+  transition: all 0.4s ease;
+}
+
+.neuron-group:hover .dendrite-branch {
+  stroke: var(--neuron-blue);
+  filter: drop-shadow(0 0 6px var(--neuron-blue));
+}
+
+.neuron-group.active .dendrite-branch {
+  stroke: var(--neuron-active);
+  filter: drop-shadow(0 0 8px var(--neuron-active));
+}
+
+.soma {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px; height: 50px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff 0%, var(--neuron-blue) 60%, transparent 100%);
+  border: 2px solid var(--neuron-blue);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-weight: bold; font-size: 0.8rem;
+  color: #040914;
+  box-shadow: 0 0 25px var(--neuron-blue), inset 0 0 10px #ffffff;
+  transition: all 0.3s ease;
+}
+
+.neuron-group:hover .soma {
+  transform: translate(-50%, -50%) scale(1.25);
+  box-shadow: 0 0 35px var(--neuron-blue), inset 0 0 15px #ffffff;
+}
+
+.neuron-group.active .soma {
+  background: radial-gradient(circle, #ffffff 0%, var(--neuron-active) 70%, transparent 100%);
+  border-color: var(--neuron-active);
+  box-shadow: 0 0 40px var(--neuron-active), inset 0 0 15px #ffffff;
+}
+
+.neuron-group.focused {
+  z-index: 10;
+}
+
+.neuron-group.focused .soma {
+  transform: translate(-50%, -50%) scale(2.2) !important;
+  box-shadow: 0 0 50px var(--neuron-active), 0 0 80px rgba(0, 255, 170, 0.6), inset 0 0 20px #ffffff;
+  border-color: #ffffff;
+}
+
+.neuron-group.focused .dendrite-branch {
+  stroke: var(--neuron-active);
+  stroke-width: 3.5;
+  filter: drop-shadow(0 0 12px var(--neuron-active));
+}
