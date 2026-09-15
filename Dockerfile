@@ -12,7 +12,7 @@ RUN mvn clean package -DskipTests
 
 # --- ETAPA 2: Ejecución ---
 # Usamos Tomcat 10 (compatible con Jakarta EE 10 y Servlets 6.0) ejecutándose sobre Java 21
-FROM tomcat:10.1-jdk21-temurin-alpine
+FROM tomcat:10.1-jdk21
 WORKDIR /usr/local/tomcat
 
 # Eliminar las aplicaciones por defecto de Tomcat para limpiar el entorno (Opcional)
