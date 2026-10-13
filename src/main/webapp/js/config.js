@@ -82,12 +82,13 @@ export const GEOMETRIC_CONNECTIONS = [
   [10, 15], [11, 15]
 ];
 
+// Posiciones de las tarjetas de las unidades en la vista de cuadrícula
 export const CARDS_GRID_POSITIONS = [
-  { x: -10.5, y: 4.0, z: 0 },
-  { x: -3.5, y: 4.0, z: 0 },
-  { x: 3.5, y: 4.0, z: 0 },
-  { x: 10.5, y: 4.0, z: 0 },
-  { x: -7.0, y: -4.0, z: 0 },
-  { x: 0.0, y: -4.0, z: 0 },
-  { x: 7.0, y: -4.0, z: 0 },
+  { x: -12.5, y: 4.5, z: 0 }, // UD01
+  { x: -4.2, y: 4.5, z: 0 },  // UD02
+  { x: 4.2, y: 4.5, z: 0 },   // UD03
+  { x: 12.5, y: 4.5, z: 0 },  // UD04
+  { x: -8.3, y: -4.5, z: 0 }, // UD05
+  { x: 0.0, y: -4.5, z: 0 },  // UD06
+  { x: 8.3, y: -4.5, z: 0 },  // UD07
 ];

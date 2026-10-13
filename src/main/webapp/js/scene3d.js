@@ -71,36 +71,39 @@ function createFolderShape(width = 5.0, height = 3.6, radius = 0.25) {
 
 function createFolderTitleTexture(tag, nombre) {
   const canvas = document.createElement("canvas");
-  canvas.width = 512;
-  canvas.height = 256;
+  canvas.width = 1024; // Mayor resolución para evitar pixelación
+  canvas.height = 512;
   const ctx = canvas.getContext("2d");
 
-  ctx.fillStyle = "rgba(4, 16, 36, 0.88)";
+  ctx.fillStyle = "rgba(4, 16, 36, 0.92)";
   ctx.strokeStyle = "#00f3ff";
-  ctx.lineWidth = 4;
+  ctx.lineWidth = 6;
 
   ctx.beginPath();
   if (ctx.roundRect)
-    ctx.roundRect(12, 12, canvas.width - 24, canvas.height - 24, 16);
-  else ctx.rect(12, 12, canvas.width - 24, canvas.height - 24);
+    ctx.roundRect(20, 20, canvas.width - 40, canvas.height - 40, 24);
+  else ctx.rect(20, 20, canvas.width - 40, canvas.height - 40);
   ctx.fill();
   ctx.stroke();
 
+  // Línea divisoria interna
   ctx.strokeStyle = "rgba(0, 243, 255, 0.4)";
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 4;
   ctx.beginPath();
-  ctx.moveTo(30, 105);
-  ctx.lineTo(canvas.width - 30, 105);
+  ctx.moveTo(50, 180);
+  ctx.lineTo(canvas.width - 50, 180);
   ctx.stroke();
 
+  // Código de la unidad (Ej: UD-01) - Texto Grande
   ctx.fillStyle = "#00f3ff";
-  ctx.font = "bold 36px monospace";
+  ctx.font = "bold 64px monospace";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(tag, canvas.width / 2, 60);
+  ctx.fillText(tag, canvas.width / 2, 100);
 
+  // Título de la unidad - Texto grande, claro y distribuido en 2 líneas si es largo
   ctx.fillStyle = "#ffffff";
-  ctx.font = "bold 22px sans-serif";
+  ctx.font = "bold 40px sans-serif";
 
   const cleanTitle = nombre.includes(":")
     ? nombre.split(":")[1].trim()
@@ -110,15 +113,15 @@ function createFolderTitleTexture(tag, nombre) {
     line2 = "";
 
   words.forEach((word) => {
-    if ((line1 + word).length < 24) line1 += word + " ";
+    if ((line1 + word).length < 20) line1 += word + " ";
     else line2 += word + " ";
   });
 
   if (line2.trim() === "") {
-    ctx.fillText(line1.trim(), canvas.width / 2, 165);
+    ctx.fillText(line1.trim(), canvas.width / 2, 310);
   } else {
-    ctx.fillText(line1.trim(), canvas.width / 2, 145);
-    ctx.fillText(line2.trim(), canvas.width / 2, 185);
+    ctx.fillText(line1.trim(), canvas.width / 2, 275);
+    ctx.fillText(line2.trim(), canvas.width / 2, 345);
   }
 
   return new THREE.CanvasTexture(canvas);
@@ -187,6 +190,7 @@ export function init3D() {
 
   buildGlobalCards();
   setupBackButtonHUD();
+  setupHeaderHUD();
 
   window.removeEventListener("click", onGraphClick);
   window.addEventListener("click", onGraphClick);
@@ -199,7 +203,7 @@ export function buildGlobalCards() {
   globalCardsGroup.clear();
   clickableCardsMeshes.length = 0;
 
-  const folderShape = createFolderShape(5.2, 3.8);
+  const folderShape = createFolderShape(6.8, 4.8);
   const extrudeSettings = {
     depth: 0.08,
     bevelEnabled: true,
@@ -310,18 +314,18 @@ export function buildGlobalCards() {
     shapeMesh.position.set(0, 0.1, 0.1);
     folderGroup.add(shapeMesh);
 
-    // 3. ETIQUETA / SPRITE CON NOMBRE DE PROGRAMA REAL
+    // 3. ETIQUETA / SPRITE CON NOMBRE DE PROGRAMA REAL (Escalado Proporcional)
     const titleTexture = createFolderTitleTexture(unitTag, unitName);
-    const spriteMat = new THREE.SpriteMaterial({
-      map: titleTexture,
-      transparent: true,
-      opacity: 0.95,
-      depthTest: false, // Evita que la tapa oculte el texto
-    });
-    const badgeSprite = new THREE.Sprite(spriteMat);
-    badgeSprite.scale.set(5.0, 2.5, 1);
-    badgeSprite.position.set(0, -1.4, 0.8); // Z ajustada hacia adelante
-    folderGroup.add(badgeSprite);
+  const spriteMat = new THREE.SpriteMaterial({
+    map: titleTexture,
+    transparent: true,
+    opacity: 0.95,
+    depthTest: false,
+  });
+  const badgeSprite = new THREE.Sprite(spriteMat);
+  badgeSprite.scale.set(7.5, 3.6, 1); // <--- Escala amplia para que cubra perfectamente y la letra luzca grande
+  badgeSprite.position.set(0, -1.7, 0.8); // Posición centrada debajo de la carpeta
+  folderGroup.add(badgeSprite);
 
     folderGroup.userData = { unitId: unit.id, frontCover: frontCover };
     frontCover.userData = { unitId: unit.id, parentFolder: folderGroup };
@@ -466,6 +470,20 @@ function onGraphClick(event) {
 export function openUnitDetailView(unitId) {
   SYSTEM_STATE.viewMode = "UNIT_DETAIL";
   SYSTEM_STATE.currentUnitId = unitId;
+  // --- OCULTAR TÍTULO GLOBAL Y MOSTRAR TÍTULO CENTRAL DE LA UNIDAD ---
+  const globalTitle = document.getElementById("header-global-title");
+  const unitTitleContainer = document.getElementById("header-unit-title-container");
+  const unitTitleText = document.getElementById("header-unit-title-text");
+
+  if (globalTitle) globalTitle.style.opacity = "0";
+  if (unitTitleContainer) unitTitleContainer.style.opacity = "1";
+
+  const currentUnit = UNITS_CONFIG.find((u) => u.id === unitId || u.id == unitId) || UNITS_CONFIG[unitId - 1];
+  if (currentUnit && unitTitleText) {
+    const tag = currentUnit.tag || currentUnit.code || `UD-0${unitId}`;
+    const nombre = (currentUnit.nombre || currentUnit.title || currentUnit.name || "").toUpperCase();
+    unitTitleText.textContent = `${tag}: ${nombre}`;
+  }
 
   let selectedFolder = null;
   globalCardsGroup.children.forEach((group) => {
@@ -627,6 +645,13 @@ export function returnToGlobalView() {
   SYSTEM_STATE.currentUnitId = null;
   SYSTEM_STATE.isZoomed = false;
 
+  // --- RESTAURAR TÍTULO GLOBAL Y OCULTAR TÍTULO CENTRAL ---
+  const globalTitle = document.getElementById("header-global-title");
+  const unitTitleContainer = document.getElementById("header-unit-title-container");
+
+  if (globalTitle) globalTitle.style.opacity = "1";
+  if (unitTitleContainer) unitTitleContainer.style.opacity = "0";
+
   // 2. Colapsar y ocultar el grupo de nodos 3D de la unidad
   gsap.to(unitDetailGroup.scale, {
     x: 0.001,
@@ -741,7 +766,9 @@ export function handleNodeInteractions(intersects) {
 
   // 1. Clic sobre una Carpeta Holográfica (Unidad Didáctica)
   if (hitObject.userData && hitObject.userData.type === "unit_card") {
-    const unitId = hitObject.userData.unitId || (hitObject.userData.data && hitObject.userData.data.id);
+    const unitId =
+      hitObject.userData.unitId ||
+      (hitObject.userData.data && hitObject.userData.data.id);
     if (unitId && typeof openUnitDetailView === "function") {
       openUnitDetailView(unitId);
     }
@@ -751,8 +778,14 @@ export function handleNodeInteractions(intersects) {
   // 2. Clic sobre un Nodo de Sesión (Grafo de 16 Nodos)
   if (hitObject.userData && hitObject.userData.type === "session_node") {
     // Extraer el id numérico o el objeto devuelto por el Raycaster
-    const rawSession = hitObject.userData.sessionId || hitObject.userData.id || hitObject.userData.data;
-    const sessionId = typeof rawSession === "object" ? (rawSession.id || rawSession.sessionId) : rawSession;
+    const rawSession =
+      hitObject.userData.sessionId ||
+      hitObject.userData.id ||
+      hitObject.userData.data;
+    const sessionId =
+      typeof rawSession === "object"
+        ? rawSession.id || rawSession.sessionId
+        : rawSession;
 
     SYSTEM_STATE.selectedNode = sessionId;
     SYSTEM_STATE.currentSession = sessionId;
@@ -867,4 +900,49 @@ function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
+}
+// función para configurar el HUD del encabezado con título y botón de cerrar sesión
+function setupHeaderHUD() {
+  let header = document.getElementById("holo-program-header");
+  if (!header) {
+    header = document.createElement("div");
+    header.id = "holo-program-header";
+    header.style.cssText = `
+      position: fixed; top: 20px; left: 30px; right: 30px; z-index: 998;
+      display: flex; justify-content: space-between; align-items: center;
+      pointer-events: none; font-family: monospace;
+    `;
+    header.innerHTML = `
+      <!-- Título Izquierda (Vista Global) -->
+      <div id="header-global-title" style="pointer-events: auto; transition: opacity 0.3s ease;">
+        <span style="display: block; font-size: 11px; color: rgba(0, 243, 255, 0.7); letter-spacing: 2px; margin-bottom: 2px;">PROGRAMA DE ESTUDIOS</span>
+        <h1 style="font-size: 18px; font-weight: bold; color: #ffffff; letter-spacing: 1px; margin: 0; text-shadow: 0 0 10px rgba(0,243,255,0.5);">DISEÑO Y PROGRAMACIÓN WEB</h1>
+      </div>
+
+      <!-- Título Dinámico Central (Vista de Detalle de Unidad) -->
+      <div id="header-unit-title-container" style="position: absolute; left: 50%; transform: translateX(-50%); text-align: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;">
+        <span style="display: block; font-size: 10px; color: rgba(0, 243, 255, 0.7); letter-spacing: 2px;">UNIDAD DIDÁCTICA ACTIVA</span>
+        <h2 id="header-unit-title-text" style="font-size: 16px; font-weight: bold; color: #00f3ff; margin: 0; text-shadow: 0 0 10px rgba(0,243,255,0.6);">---</h2>
+      </div>
+
+      <!-- Botón Cerrar Sesión -->
+      <button id="logout-session-btn" style="
+        pointer-events: auto; background: rgba(4, 16, 36, 0.88); border: 1px solid #ff5555;
+        color: #ff5555; padding: 8px 16px; border-radius: 6px; font-family: monospace;
+        font-weight: bold; font-size: 11px; cursor: pointer; box-shadow: 0 0 15px rgba(255,85,85,0.2);
+        transition: all 0.3s ease; display: flex; align-items: center; gap: 6px;
+      ">
+        ⏻ CERRAR SESIÓN
+      </button>
+    `;
+    document.body.appendChild(header);
+
+    document.getElementById("logout-session-btn").addEventListener("click", () => {
+      if (confirm("¿Estás seguro de cerrar la sesión actual?")) {
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.reload();
+      }
+    });
+  }
 }
