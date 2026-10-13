@@ -71,10 +71,17 @@
                                 autocomplete="off">
                         </div>
 
+
                         <div class="input-group">
                             <label class="input-label" for="password">> ENTER_ACCESS_KEY:</label>
                             <input type="password" id="password" class="term-input"
                                 placeholder="INGRESA CLAVE DE ACCESO..." required autocomplete="off">
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label" for="text">> credenciales de prueba:
+                               <br> USER: cmendoza@aacd.edu.pe <br>
+                                PASS: estudiante123
+                            </label>
                         </div>
 
                         <button type="submit" class="btn-hack">
@@ -95,6 +102,7 @@
                 <div id="neurons-container"></div>
             </div>
         </div>
+        
 
         <!-- ==================== PANEL DE SESIONES ==================== -->
         <div id="session-panel">

@@ -271,7 +271,7 @@ function createNodeBadgeTexture(text) {
   ctx.stroke();
 
   ctx.fillStyle = "#00f3ff";
-  ctx.font = "bold 20px monospace";
+  ctx.font = "bold 40px monospace";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(text, canvas.width / 2, canvas.height / 2);

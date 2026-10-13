@@ -1,32 +1,40 @@
 package com.miempresa.miapp.config;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConnection {
 
-    // Lee la URL del pooler de Supabase desde las variables de entorno de Render
-    private static final String URL = System.getenv("DB_URL") != null ? 
-        System.getenv("DB_URL") : "jdbc:postgresql://aws-0-us-west-2.pooler.supabase.com:6543/postgres?sslmode=require";
-    
-    // El usuario para el pooler de Supabase incluye el ID del proyecto
-    private static final String USER = System.getenv("DB_USER") != null ? 
-        System.getenv("DB_USER") : "postgres.acmshmfjhdpftgplccew"; 
-        
-    private static final String PASSWORD = System.getenv("DB_PASSWORD") != null ? 
-        System.getenv("DB_PASSWORD") : "tu_contraseña_aqui"; 
+    // Carga el archivo .env de forma local
+    private static final Dotenv dotenv = Dotenv.configure().load();
+
+    private static final String URL = dotenv.get("DB_URL");
+    private static final String USER = dotenv.get("DB_USER");
+    private static final String PASSWORD = dotenv.get("DB_PASSWORD");
 
     static {
         try {
             Class.forName("org.postgresql.Driver");
+            System.out.println("Driver de PostgreSQL cargado correctamente.");
         } catch (ClassNotFoundException e) {
-            System.err.println("Error al cargar el Driver de PostgreSQL: " + e.getMessage());
+            System.err.println("ERROR CRITICO: No se encontró el Driver de PostgreSQL: " + e.getMessage());
         }
     }
 
+
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+        try {
+            System.out.println("Intentando conectar a Supabase localmente...");
+            Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            System.out.println("¡CONEXIÓN EXITOSA A SUPABASE!");
+            return conn;
+        } catch (SQLException e) {
+            System.err.println("FALLO DE CONEXIÓN A SUPABASE: " + e.getMessage());
+            System.err.println("SQLState: " + e.getSQLState());
+            throw e;
+        }
     }
 
     public static void closeConnection(Connection conn) {
