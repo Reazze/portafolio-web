@@ -6,33 +6,29 @@ import java.sql.SQLException;
 
 public class DBConnection {
 
-    // Configuración de la base de datos
-    private static final String URL = "jdbc:postgresql://db.acmshmfjhdpftgplccew.supabase.co:5432/postgres?sslmode=require";
-    private static final String USER = "postgres";      // Cambia si usas otro usuario
-    private static final String PASSWORD = "x1pk2t7h4f13g8"; // Reemplaza por tu contraseña de Postgres
+    // Lee la URL del pooler de Supabase desde las variables de entorno de Render
+    private static final String URL = System.getenv("DB_URL") != null ? 
+        System.getenv("DB_URL") : "jdbc:postgresql://aws-0-us-west-2.pooler.supabase.com:6543/postgres?sslmode=require";
+    
+    // El usuario para el pooler de Supabase incluye el ID del proyecto
+    private static final String USER = System.getenv("DB_USER") != null ? 
+        System.getenv("DB_USER") : "postgres.acmshmfjhdpftgplccew"; 
+        
+    private static final String PASSWORD = System.getenv("DB_PASSWORD") != null ? 
+        System.getenv("DB_PASSWORD") : "tu_contraseña_aqui"; 
 
     static {
         try {
-            // Cargar el driver JDBC de PostgreSQL
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
             System.err.println("Error al cargar el Driver de PostgreSQL: " + e.getMessage());
         }
     }
 
-    /**
-     * Obtiene una conexión activa a la base de datos PostgreSQL
-     * @return Connection
-     * @throws SQLException
-     */
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
-    /**
-     * Método utilitario para cerrar la conexión de forma segura
-     * @param conn
-     */
     public static void closeConnection(Connection conn) {
         if (conn != null) {
             try {
