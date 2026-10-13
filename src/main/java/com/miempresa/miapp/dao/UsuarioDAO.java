@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+
 public class UsuarioDAO {
 
     /**
@@ -64,6 +65,7 @@ public class UsuarioDAO {
         return usuario;
     }
 
+    
     /**
      * Registra el log de acceso en la base de datos tras una autenticación exitosa.
      */

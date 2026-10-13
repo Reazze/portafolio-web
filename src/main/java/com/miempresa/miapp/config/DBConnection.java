@@ -7,9 +7,9 @@ import java.sql.SQLException;
 public class DBConnection {
 
     // Configuración de la base de datos
-    private static final String URL = "jdbc:postgresql://localhost:5432/portafolio_db";
+    private static final String URL = "jdbc:postgresql://db.acmshmfjhdpftgplccew.supabase.co:5432/postgres?sslmode=require";
     private static final String USER = "postgres";      // Cambia si usas otro usuario
-    private static final String PASSWORD = "admin123"; // Reemplaza por tu contraseña de Postgres
+    private static final String PASSWORD = "x1pk2t7h4f13g8"; // Reemplaza por tu contraseña de Postgres
 
     static {
         try {
